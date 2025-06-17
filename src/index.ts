@@ -21,7 +21,7 @@ async function initBackend() {
     resolvers: {
       Query: {
         hello: () => "Hey there, I am a GraphQL Server",
-        greeting: (name: String) => `Hi there! ${name}`,
+        greeting: (_, { name }: { name: String }) => `Hi there! ${name}`,
       },
     },
   });
