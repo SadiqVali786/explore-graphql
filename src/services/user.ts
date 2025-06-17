@@ -39,6 +39,10 @@ export class UserService {
     return await prisma.user.findFirst({ where: { email } });
   }
 
+  public static async getUserById(id: string) {
+    return await prisma.user.findFirst({ where: { id } });
+  }
+
   public static async createJWTToken(payload: CreateJWTTokenPayload) {
     const user = await UserService.getUserByEmail(payload.email);
     if (!user) throw new Error("user not found");
@@ -52,5 +56,9 @@ export class UserService {
 
     const token = JWT.sign({ id: user.id, email: user.email }, JWT_SECRET);
     return token;
+  }
+
+  public static decodeJWTToken(token: string) {
+    return JWT.verify(token, JWT_SECRET);
   }
 }

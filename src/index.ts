@@ -3,6 +3,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import cors from "cors";
 
 import { createApolloGraphQLServer } from "./graphql";
+import { UserService } from "./services/user";
 
 async function initBackend() {
   const app = express();
@@ -16,7 +17,21 @@ async function initBackend() {
 
   const graphQLServer = await createApolloGraphQLServer();
 
-  app.use("/graphql", expressMiddleware(graphQLServer));
+  app.use(
+    "/graphql",
+    expressMiddleware(graphQLServer, {
+      context: async ({ req }) => {
+        // context: async ({ req }) => ({ token: req.headers.token }),
+        const token = req.headers["token"] as string;
+        try {
+          const user = UserService.decodeJWTToken(token);
+          return { user };
+        } catch (error) {
+          return {};
+        }
+      },
+    })
+  );
 
   app.listen(PORT, () =>
     console.log(`Server is listening at http://localhost:${PORT}`)
