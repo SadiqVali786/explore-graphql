@@ -43,13 +43,27 @@ This command will:
 
 ```
 .
-├── prisma/               # Prisma schema and migration files
-├── src/                  # All application source code
-│   └── index.ts          # Entry point
-├── docker-compose.yml    # PostgreSQL Docker config
-├── .eslintrc             # ESLint configuration
-├── tsconfig.json         # TypeScript config
-└── bunfig.toml           # Bun project configuration
+├── prisma/                          # Prisma schema and migration files
+│   └── schema.prisma                # Defines DB models and relationships
+├── src/                             # All application source code
+│   ├── index.ts                     # Main entry point of the server
+│   ├── graphql/                     # GraphQL schema and resolver modules
+│   │   ├── user/                    # User-related GraphQL logic
+│   │   │   ├── index.ts             # Combines all user GraphQL exports
+│   │   │   ├── mutations.ts         # User mutation definitions (e.g., signup)
+│   │   │   ├── queries.ts           # User query definitions (e.g., getProfile)
+│   │   │   ├── resolvers.ts         # Resolver functions for user types
+│   │   │   └── typeDefs.ts          # Type definitions for user GraphQL types
+│   │   ├── post/                    # Post-related GraphQL logic (similar structure)
+│   │   └── index.ts                 # Combines user, post, etc., into root schema
+│   ├── lib/                         # Shared libraries and utilities
+│   │   └── db.ts                    # Prisma client instance and DB connection logic
+│   └── services/                    # Business logic layer
+│       ├── user.ts                  # User-related service functions
+│       └── post.ts                  # Post-related service functions
+├── docker-compose.yml               # Docker config to spin up PostgreSQL DB
+├── .eslintrc                        # ESLint config for code quality and style
+├── tsconfig.json                    # TypeScript compiler configuration
 ```
 
 ### 🗃️ Database
