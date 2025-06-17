@@ -3,6 +3,7 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 
 import cors from "cors";
+import { prisma } from "./lib/db";
 
 async function initBackend() {
   const app = express();
@@ -17,11 +18,46 @@ async function initBackend() {
         hello: String
         greeting(name: String): String
       }
+      
+      type Mutation {
+        createUser(firstName: String!, lastName: String!, email: String!, password: String!): Boolean
+      }
     `,
     resolvers: {
       Query: {
         hello: () => "Hey there, I am a GraphQL Server",
         greeting: (_, { name }: { name: String }) => `Hi there! ${name}`,
+      },
+      Mutation: {
+        createUser: async (
+          _,
+          {
+            email,
+            firstName,
+            lastName,
+            password,
+          }: {
+            firstName: string;
+            lastName: string;
+            email: string;
+            password: string;
+          }
+        ) => {
+          try {
+            await prisma.user.create({
+              data: {
+                email,
+                firstName,
+                lastName,
+                password,
+                salt: "random_salt",
+              },
+            });
+            return true;
+          } catch (error) {
+            return false;
+          }
+        },
       },
     },
   });
